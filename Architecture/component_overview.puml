@@ -1,0 +1,112 @@
+@startuml SEO_Component_Overview
+
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam componentStyle uml2
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+
+title SEO Analyzer - Component Overview Diagram
+
+header High-Level System Architecture
+footer Google ADK Multi-Agent SEO Analysis System
+
+' ============================================
+' MAIN COMPONENTS
+' ============================================
+
+package "SEO Analyzer System" {
+    
+    ' Entry Point
+    [main.py] as MAIN #ECEFF1
+    note right of MAIN
+        CLI Entry Point
+        - analyze
+        - evaluate
+        - history
+        - metrics
+    end note
+    
+    ' Configuration
+    [config.py] as CONFIG #F5F5F5
+    [.env] as ENV #F5F5F5
+    
+    ' Core Components
+    package "Core" {
+        [orchestrator.py] as ORCH #FCE4EC
+        [agents.py] as AGENTS #E3F2FD
+        [tools.py] as TOOLS #FFF3E0
+    }
+    
+    ' Services
+    package "Services" {
+        [pdf_service.py] as PDF #E8F5E9
+        [observability.py] as OBS #E8F5E9
+        [database.py] as DB_SVC #F3E5F5
+    }
+    
+    ' Data
+    package "Data" {
+        database "seo_analysis.db" as DB #F3E5F5
+        folder "outputs/" as OUT #F3E5F5
+    }
+}
+
+' External
+cloud "Google Gemini API" as GEMINI #4285F4
+cloud "Target Website" as WEBSITE #FFA726
+
+' ============================================
+' RELATIONSHIPS
+' ============================================
+
+MAIN --> CONFIG : loads
+CONFIG --> ENV : reads
+
+MAIN --> ORCH : invokes
+ORCH --> AGENTS : coordinates
+AGENTS --> TOOLS : uses
+TOOLS --> WEBSITE : fetches
+
+AGENTS --> GEMINI : LLM calls
+ORCH --> PDF : generates
+ORCH --> OBS : logs
+ORCH --> DB_SVC : stores
+
+DB_SVC --> DB : writes
+PDF --> OUT : saves
+
+' ============================================
+' FILE DESCRIPTIONS
+' ============================================
+
+note bottom of ORCH
+    **orchestrator.py**
+    - SEOOrchestrator class
+    - Parallel agent execution
+    - Sequential workflow
+    - Session management
+end note
+
+note bottom of AGENTS
+    **agents.py**
+    - 6 LLM Agents:
+      • security_agent
+      • onpage_agent
+      • content_agent
+      • performance_agent
+      • indexability_agent
+      • report_agent
+end note
+
+note bottom of TOOLS
+    **tools.py**
+    - 11 FunctionTools:
+      • Security checks
+      • OnPage analysis
+      • Content quality
+      • Performance metrics
+      • Indexability checks
+end note
+
+@enduml

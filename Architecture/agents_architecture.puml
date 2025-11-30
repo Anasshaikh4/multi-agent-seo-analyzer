@@ -1,0 +1,208 @@
+@startuml SEO_Multi_Agent_Architecture
+
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam componentStyle uml2
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam ArrowColor #333333
+skinparam RectangleBorderColor #333333
+
+title SEO Analyzer - Google ADK Multi-Agent Architecture
+
+' Define colors
+!define AGENT_COLOR #E3F2FD
+!define TOOL_COLOR #FFF3E0
+!define SERVICE_COLOR #E8F5E9
+!define ORCHESTRATOR_COLOR #FCE4EC
+!define DATABASE_COLOR #F3E5F5
+
+' Header
+header Google Agent Development Kit (ADK) Capstone Project
+footer Generated: November 2025 | Powered by Gemini 2.0 Flash
+
+' ============================================
+' USER INTERFACE LAYER
+' ============================================
+package "User Interface" as UI #ECEFF1 {
+    component [CLI Main.py] as CLI
+    note right of CLI
+        Commands:
+        - analyze <url>
+        - evaluate
+        - history
+        - metrics
+    end note
+}
+
+' ============================================
+' ORCHESTRATOR LAYER
+' ============================================
+package "Orchestrator Layer" <<Rectangle>> #FCE4EC {
+    component [SEO Orchestrator] as ORCH <<Coordinator>> #FCE4EC
+    
+    note right of ORCH
+        **Multi-Agent Coordination**
+        - Parallel Agent Execution
+        - Sequential Workflow
+        - Session Management
+        - State Aggregation
+    end note
+}
+
+' ============================================
+' AGENT LAYER - Analysis Agents (Parallel)
+' ============================================
+package "Analysis Agents (Parallel Execution)" as AGENTS #E3F2FD {
+    
+    component [Security Agent] as SEC_AGENT <<LlmAgent>> #E3F2FD {
+    }
+    
+    component [OnPage Agent] as ONPAGE_AGENT <<LlmAgent>> #E3F2FD {
+    }
+    
+    component [Content Agent] as CONTENT_AGENT <<LlmAgent>> #E3F2FD {
+    }
+    
+    component [Performance Agent] as PERF_AGENT <<LlmAgent>> #E3F2FD {
+    }
+    
+    component [Indexability Agent] as INDEX_AGENT <<LlmAgent>> #E3F2FD {
+    }
+}
+
+' ============================================
+' REPORT AGENT (Sequential)
+' ============================================
+package "Report Generation (Sequential)" as REPORT_PKG #E8F5E9 {
+    component [Report Agent] as REPORT_AGENT <<LlmAgent>> #E8F5E9
+    
+    note bottom of REPORT_AGENT
+        Consolidates all agent results
+        into a comprehensive SEO report
+    end note
+}
+
+' ============================================
+' TOOLS LAYER
+' ============================================
+package "Custom Tools (FunctionTool)" as TOOLS #FFF3E0 {
+    
+    package "Security Tools" as SEC_TOOLS {
+        component [check_https_security] as T1 #FFF3E0
+        component [check_security_headers] as T2 #FFF3E0
+    }
+    
+    package "OnPage SEO Tools" as ONPAGE_TOOLS {
+        component [check_title_and_meta] as T3 #FFF3E0
+        component [check_heading_structure] as T4 #FFF3E0
+        component [check_image_alt_tags] as T5 #FFF3E0
+    }
+    
+    package "Content Tools" as CONTENT_TOOLS {
+        component [analyze_content_quality] as T6 #FFF3E0
+        component [check_internal_links] as T7 #FFF3E0
+    }
+    
+    package "Performance Tools" as PERF_TOOLS {
+        component [check_page_performance] as T8 #FFF3E0
+        component [check_mobile_friendly] as T9 #FFF3E0
+    }
+    
+    package "Indexability Tools" as INDEX_TOOLS {
+        component [check_robots_and_sitemap] as T10 #FFF3E0
+        component [check_meta_robots] as T11 #FFF3E0
+    }
+}
+
+' ============================================
+' SERVICES LAYER
+' ============================================
+package "Services" as SERVICES #E8F5E9 {
+    component [PDF Service] as PDF_SVC #E8F5E9
+    component [Session Service\n(InMemorySessionService)] as SESSION_SVC #E8F5E9
+    component [Observability] as OBS_SVC #E8F5E9
+}
+
+' ============================================
+' DATA LAYER
+' ============================================
+package "Data Layer" as DATA #F3E5F5 {
+    database "SQLite\n(seo_analysis.db)" as DB #F3E5F5
+    folder "outputs/" as OUTPUTS #F3E5F5
+}
+
+' ============================================
+' EXTERNAL SERVICES
+' ============================================
+cloud "Google Gemini API" as GEMINI #4285F4
+
+' ============================================
+' RELATIONSHIPS
+' ============================================
+
+' User to CLI
+CLI --> ORCH : analyze(url)
+
+' Orchestrator to Agents (Parallel)
+ORCH --> SEC_AGENT : <<parallel>>
+ORCH --> ONPAGE_AGENT : <<parallel>>
+ORCH --> CONTENT_AGENT : <<parallel>>
+ORCH --> PERF_AGENT : <<parallel>>
+ORCH --> INDEX_AGENT : <<parallel>>
+
+' Agents to Report (Sequential)
+SEC_AGENT --> REPORT_AGENT : results
+ONPAGE_AGENT --> REPORT_AGENT : results
+CONTENT_AGENT --> REPORT_AGENT : results
+PERF_AGENT --> REPORT_AGENT : results
+INDEX_AGENT --> REPORT_AGENT : results
+
+' Agents to Tools
+SEC_AGENT ..> T1 : uses
+SEC_AGENT ..> T2 : uses
+
+ONPAGE_AGENT ..> T3 : uses
+ONPAGE_AGENT ..> T4 : uses
+ONPAGE_AGENT ..> T5 : uses
+
+CONTENT_AGENT ..> T6 : uses
+CONTENT_AGENT ..> T7 : uses
+
+PERF_AGENT ..> T8 : uses
+PERF_AGENT ..> T9 : uses
+
+INDEX_AGENT ..> T10 : uses
+INDEX_AGENT ..> T11 : uses
+
+' Agents to Gemini
+SEC_AGENT --> GEMINI : LLM calls
+ONPAGE_AGENT --> GEMINI : LLM calls
+CONTENT_AGENT --> GEMINI : LLM calls
+PERF_AGENT --> GEMINI : LLM calls
+INDEX_AGENT --> GEMINI : LLM calls
+REPORT_AGENT --> GEMINI : LLM calls
+
+' Report to PDF Service
+REPORT_AGENT --> PDF_SVC : markdown
+
+' Services connections
+ORCH --> SESSION_SVC : state management
+ORCH --> OBS_SVC : logging/metrics
+ORCH --> DB : store results
+PDF_SVC --> OUTPUTS : save PDF
+
+' ============================================
+' LEGEND
+' ============================================
+legend right
+    |= Component |= Description |
+    | <back:#E3F2FD>Agent</back> | LLM-powered ADK Agent |
+    | <back:#FFF3E0>Tool</back> | Custom FunctionTool |
+    | <back:#E8F5E9>Service</back> | Supporting Service |
+    | <back:#F3E5F5>Data</back> | Storage Layer |
+    | <<parallel>> | Concurrent Execution |
+    | <<sequential>> | Sequential Execution |
+endlegend
+
+@enduml

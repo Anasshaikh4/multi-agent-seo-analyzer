@@ -1,0 +1,106 @@
+# ===========================================
+# 🚨 SECURITY: API Keys and Secrets
+# ===========================================
+# NEVER commit these files!
+.env
+.env.local
+.env.production
+.env.*.local
+*.secret
+*.key
+secrets/
+credentials/
+
+# Google API credentials
+service-account.json
+client_secret*.json
+*.pem
+
+# ===========================================
+# Python
+# ===========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ===========================================
+# Virtual Environments
+# ===========================================
+venv/
+ENV/
+env/
+.venv/
+.conda/
+
+# ===========================================
+# IDE and Editor
+# ===========================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+
+# ===========================================
+# Testing
+# ===========================================
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+
+# ===========================================
+# Database (keep .db for demo purposes)
+# ===========================================
+# Uncomment below to exclude database files
+# *.db
+# seo_analysis.db
+
+# ===========================================
+# Output Files
+# ===========================================
+outputs/*.pdf
+*.log
+logs/
+
+# ===========================================
+# OS Generated
+# ===========================================
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Output files (generated at runtime)
+outputs/*.pdf
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

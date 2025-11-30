@@ -1,0 +1,153 @@
+@startuml SEO_Sequence_Flow
+
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam SequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+
+title SEO Analysis - Sequence Flow Diagram
+
+header Multi-Agent Orchestration Flow
+footer Parallel Analysis → Sequential Report Generation → PDF Export
+
+' ============================================
+' PARTICIPANTS
+' ============================================
+actor User as user
+participant "CLI\n(main.py)" as cli #ECEFF1
+participant "Orchestrator" as orch #FCE4EC
+participant "Session\nService" as session #E8F5E9
+database "SQLite DB" as db #F3E5F5
+
+box "Analysis Agents (Parallel)" #E3F2FD
+    participant "Security\nAgent" as sec
+    participant "OnPage\nAgent" as onpage
+    participant "Content\nAgent" as content
+    participant "Performance\nAgent" as perf
+    participant "Indexability\nAgent" as index
+end box
+
+participant "Report\nAgent" as report #E8F5E9
+participant "PDF\nService" as pdf #FFF3E0
+participant "Gemini\nAPI" as gemini #4285F4
+
+' ============================================
+' SEQUENCE FLOW
+' ============================================
+
+== Initialization ==
+
+user -> cli : python main.py analyze <url>
+activate cli
+
+cli -> orch : analyze_website(url)
+activate orch
+
+orch -> db : create_analysis_request(url)
+db --> orch : request_id
+
+orch -> session : create_sessions()
+session --> orch : sessions_created
+
+== Parallel Agent Execution ==
+
+orch -> db : update_status("analyzing")
+
+par Parallel Execution
+    orch ->> sec : run_agent(url)
+    activate sec
+    sec -> gemini : LLM request
+    gemini --> sec : tool_calls
+    sec -> sec : check_https_security(url)
+    sec -> sec : check_security_headers(url)
+    sec -> gemini : tool_results
+    gemini --> sec : analysis_result
+    sec --> orch : AgentResult
+    deactivate sec
+    
+else
+    orch ->> onpage : run_agent(url)
+    activate onpage
+    onpage -> gemini : LLM request
+    gemini --> onpage : tool_calls
+    onpage -> onpage : check_title_and_meta(url)
+    onpage -> onpage : check_heading_structure(url)
+    onpage -> onpage : check_image_alt_tags(url)
+    onpage -> gemini : tool_results
+    gemini --> onpage : analysis_result
+    onpage --> orch : AgentResult
+    deactivate onpage
+    
+else
+    orch ->> content : run_agent(url)
+    activate content
+    content -> gemini : LLM request
+    gemini --> content : tool_calls
+    content -> content : analyze_content_quality(url)
+    content -> content : check_internal_links(url)
+    content -> gemini : tool_results
+    gemini --> content : analysis_result
+    content --> orch : AgentResult
+    deactivate content
+    
+else
+    orch ->> perf : run_agent(url)
+    activate perf
+    perf -> gemini : LLM request
+    gemini --> perf : tool_calls
+    perf -> perf : check_page_performance(url)
+    perf -> perf : check_mobile_friendly(url)
+    perf -> gemini : tool_results
+    gemini --> perf : analysis_result
+    perf --> orch : AgentResult
+    deactivate perf
+    
+else
+    orch ->> index : run_agent(url)
+    activate index
+    index -> gemini : LLM request
+    gemini --> index : tool_calls
+    index -> index : check_robots_and_sitemap(url)
+    index -> index : check_meta_robots(url)
+    index -> gemini : tool_results
+    gemini --> index : analysis_result
+    index --> orch : AgentResult
+    deactivate index
+end
+
+== Sequential Report Generation ==
+
+orch -> orch : aggregate_results()
+
+orch -> report : generate_report(results)
+activate report
+
+report -> gemini : Create SEO Report\n(all agent results)
+gemini --> report : markdown_report
+
+report --> orch : report_markdown
+deactivate report
+
+== PDF Generation ==
+
+orch -> pdf : generate_report_pdf(markdown)
+activate pdf
+pdf -> pdf : add_header()
+pdf -> pdf : convert_to_pdf()
+pdf --> orch : pdf_path
+deactivate pdf
+
+== Finalization ==
+
+orch -> db : update_status("completed")
+orch -> db : store_results()
+
+orch --> cli : SEOAnalysisResult
+deactivate orch
+
+cli --> user : Display Report\n+ PDF Path
+deactivate cli
+
+@enduml

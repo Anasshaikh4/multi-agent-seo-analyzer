@@ -1,0 +1,91 @@
+@startuml SEO_Multi_Agent_Architecture
+
+skinparam backgroundColor #FEFEFE
+skinparam componentStyle rectangle
+
+title SEO Analyzer - Google ADK Multi-Agent Architecture
+
+package "User Interface" {
+    [CLI Main.py] as CLI
+}
+
+package "Orchestrator" {
+    [SEO Orchestrator] as ORCH
+}
+
+package "Analysis Agents" {
+    [Security Agent] as SEC
+    [OnPage Agent] as ONPAGE
+    [Content Agent] as CONTENT
+    [Performance Agent] as PERF
+    [Indexability Agent] as INDEX
+}
+
+package "Report Generation" {
+    [Report Agent] as REPORT
+}
+
+package "Tools" {
+    [check_https_security] as T1
+    [check_security_headers] as T2
+    [check_title_and_meta] as T3
+    [check_heading_structure] as T4
+    [check_image_alt_tags] as T5
+    [analyze_content_quality] as T6
+    [check_internal_links] as T7
+    [check_page_performance] as T8
+    [check_mobile_friendly] as T9
+    [check_robots_and_sitemap] as T10
+    [check_meta_robots] as T11
+}
+
+package "Services" {
+    [PDF Service] as PDF
+    [Session Service] as SESSION
+    [Observability] as OBS
+}
+
+database "SQLite" as DB
+folder "outputs/" as OUTPUTS
+cloud "Gemini API" as GEMINI
+
+CLI --> ORCH
+
+ORCH --> SEC
+ORCH --> ONPAGE
+ORCH --> CONTENT
+ORCH --> PERF
+ORCH --> INDEX
+
+SEC --> REPORT
+ONPAGE --> REPORT
+CONTENT --> REPORT
+PERF --> REPORT
+INDEX --> REPORT
+
+SEC ..> T1
+SEC ..> T2
+ONPAGE ..> T3
+ONPAGE ..> T4
+ONPAGE ..> T5
+CONTENT ..> T6
+CONTENT ..> T7
+PERF ..> T8
+PERF ..> T9
+INDEX ..> T10
+INDEX ..> T11
+
+SEC --> GEMINI
+ONPAGE --> GEMINI
+CONTENT --> GEMINI
+PERF --> GEMINI
+INDEX --> GEMINI
+REPORT --> GEMINI
+
+REPORT --> PDF
+ORCH --> SESSION
+ORCH --> OBS
+ORCH --> DB
+PDF --> OUTPUTS
+
+@enduml

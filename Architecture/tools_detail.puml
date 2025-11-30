@@ -1,0 +1,253 @@
+@startuml SEO_Tools_Detail
+
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam classAttributeIconSize 0
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+
+title SEO Analyzer - Custom Tools Architecture
+
+header Google ADK FunctionTools Implementation
+footer 11 Custom Tools for SEO Analysis
+
+' ============================================
+' ABSTRACT TOOL BASE
+' ============================================
+abstract class FunctionTool <<google.adk.tools>> {
+    + name: str
+    + description: str
+    + func: Callable
+    --
+    + __call__(**kwargs)
+}
+
+' ============================================
+' SECURITY TOOLS
+' ============================================
+package "Security Analysis Tools" #FFE0E0 {
+    
+    class check_https_security <<FunctionTool>> {
+        **Parameters:**
+        + url: str
+        --
+        **Returns:**
+        + is_https: bool
+        + has_valid_ssl: bool
+        + redirects_to_https: bool
+        + score: int (0-100)
+        --
+        Validates HTTPS implementation
+        and SSL certificate status
+    }
+    
+    class check_security_headers <<FunctionTool>> {
+        **Parameters:**
+        + url: str
+        --
+        **Returns:**
+        + headers_found: List[str]
+        + missing_headers: List[str]
+        + score: int (0-100)
+        --
+        Checks for security headers:
+        - Strict-Transport-Security
+        - X-Content-Type-Options
+        - X-Frame-Options
+        - X-XSS-Protection
+        - Content-Security-Policy
+    }
+}
+
+' ============================================
+' ONPAGE SEO TOOLS
+' ============================================
+package "On-Page SEO Tools" #E0F0FF {
+    
+    class check_title_and_meta <<FunctionTool>> {
+        **Parameters:**
+        + url: str
+        --
+        **Returns:**
+        + title: str
+        + title_length: int
+        + meta_description: str
+        + meta_length: int
+        + issues: List[str]
+        + score: int (0-100)
+        --
+        Analyzes title tag and
+        meta description optimization
+    }
+    
+    class check_heading_structure <<FunctionTool>> {
+        **Parameters:**
+        + url: str
+        --
+        **Returns:**
+        + h1_count: int
+        + h1_text: List[str]
+        + heading_hierarchy: Dict
+        + issues: List[str]
+        + score: int (0-100)
+        --
+        Validates heading hierarchy
+        (H1-H6 structure)
+    }
+    
+    class check_image_alt_tags <<FunctionTool>> {
+        **Parameters:**
+        + url: str
+        --
+        **Returns:**
+        + total_images: int
+        + images_with_alt: int
+        + images_without_alt: int
+        + score: int (0-100)
+        --
+        Checks image accessibility
+        and alt tag implementation
+    }
+}
+
+' ============================================
+' CONTENT TOOLS
+' ============================================
+package "Content Analysis Tools" #E0FFE0 {
+    
+    class analyze_content_quality <<FunctionTool>> {
+        **Parameters:**
+        + url: str
+        --
+        **Returns:**
+        + word_count: int
+        + paragraph_count: int
+        + avg_sentence_length: float
+        + readability_score: float
+        + issues: List[str]
+        + score: int (0-100)
+        --
+        Evaluates content depth,
+        readability and quality
+    }
+    
+    class check_internal_links <<FunctionTool>> {
+        **Parameters:**
+        + url: str
+        --
+        **Returns:**
+        + internal_links: int
+        + external_links: int
+        + broken_links: List[str]
+        + score: int (0-100)
+        --
+        Analyzes internal linking
+        structure and navigation
+    }
+}
+
+' ============================================
+' PERFORMANCE TOOLS
+' ============================================
+package "Performance Tools" #FFF0E0 {
+    
+    class check_page_performance <<FunctionTool>> {
+        **Parameters:**
+        + url: str
+        --
+        **Returns:**
+        + load_time_ms: int
+        + page_size_kb: int
+        + response_code: int
+        + issues: List[str]
+        + score: int (0-100)
+        --
+        Measures page load time
+        and response metrics
+    }
+    
+    class check_mobile_friendly <<FunctionTool>> {
+        **Parameters:**
+        + url: str
+        --
+        **Returns:**
+        + has_viewport: bool
+        + viewport_content: str
+        + responsive_hints: List[str]
+        + score: int (0-100)
+        --
+        Validates mobile optimization
+        and responsive design
+    }
+}
+
+' ============================================
+' INDEXABILITY TOOLS
+' ============================================
+package "Indexability Tools" #F0E0FF {
+    
+    class check_robots_and_sitemap <<FunctionTool>> {
+        **Parameters:**
+        + url: str
+        --
+        **Returns:**
+        + has_robots_txt: bool
+        + robots_content: str
+        + has_sitemap: bool
+        + sitemap_url: str
+        + score: int (0-100)
+        --
+        Checks robots.txt and
+        sitemap.xml presence
+    }
+    
+    class check_meta_robots <<FunctionTool>> {
+        **Parameters:**
+        + url: str
+        --
+        **Returns:**
+        + meta_robots: str
+        + is_indexable: bool
+        + is_followable: bool
+        + canonical_url: str
+        + score: int (0-100)
+        --
+        Analyzes meta robots tags
+        and canonical implementation
+    }
+}
+
+' ============================================
+' RELATIONSHIPS
+' ============================================
+FunctionTool <|-- check_https_security
+FunctionTool <|-- check_security_headers
+FunctionTool <|-- check_title_and_meta
+FunctionTool <|-- check_heading_structure
+FunctionTool <|-- check_image_alt_tags
+FunctionTool <|-- analyze_content_quality
+FunctionTool <|-- check_internal_links
+FunctionTool <|-- check_page_performance
+FunctionTool <|-- check_mobile_friendly
+FunctionTool <|-- check_robots_and_sitemap
+FunctionTool <|-- check_meta_robots
+
+' ============================================
+' NOTES
+' ============================================
+note bottom of check_https_security
+    Uses **requests** library
+    with SSL verification
+end note
+
+note bottom of check_title_and_meta
+    Uses **BeautifulSoup4**
+    for HTML parsing
+end note
+
+note bottom of check_page_performance
+    Measures actual HTTP
+    response time
+end note
+
+@enduml
