@@ -10,6 +10,21 @@ This project transforms a traditional Python SEO analysis tool into a modern mul
 
 This project demonstrates **6+ key concepts** from the ADK course:
 
+## 🏗️ Architecture
+
+<p align="center">
+  <img src="Architecture/agents_architecture_simple.png" alt="Multi-Agent Architecture" width="800">
+</p>
+
+### Component Overview
+![Component Overview](Architecture/component_overview.png)
+
+### Workflow Sequence
+![Sequence Flow](Architecture/sequence_flow.png)
+
+### Tools Detail
+![Tools](Architecture/tools_detail.png)
+
 ### 1. Multi-Agent System
 - **LLM-Powered Agents**: 6 specialized agents using Gemini 2.0 Flash
   - Security Agent
