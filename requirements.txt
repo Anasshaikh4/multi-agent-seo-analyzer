@@ -1,6 +1,11 @@
 # Google Agent Development Kit
 google-adk>=1.0.0
 
+# FastAPI for REST API
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+pydantic[email]>=2.5.0
+
 # Web scraping and HTTP requests
 requests>=2.31.0
 beautifulsoup4>=4.12.0
