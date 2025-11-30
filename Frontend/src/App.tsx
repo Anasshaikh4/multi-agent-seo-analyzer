@@ -5,6 +5,8 @@ import { FormScreen } from './components/FormScreen';
 import { AnalyzingScreen } from './components/AnalyzingScreen';
 import { ResultsScreen } from './components/ResultsScreen';
 import { ParticleBackground } from './components/ParticleBackground';
+import { ThemeToggle } from './components/ThemeToggle';
+import { useTheme } from './context/ThemeContext';
 import { AppStep, UserDetails, AgentStatus } from './types';
 import { startAnalysis, getAnalysisProgress, downloadPdfReport } from './api';
 
@@ -127,8 +129,13 @@ function App() {
     setIsDownloading(false);
   }, [requestId, userDetails]);
 
+  const { isDark } = useTheme();
+
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <div className={`min-h-screen relative overflow-hidden transition-colors duration-500 ${
+      isDark ? 'bg-dark-900' : 'bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50'
+    }`}>
+      <ThemeToggle />
       <ParticleBackground />
       
       <div className="relative z-10">

@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Globe, Mail, User, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
 import { UserDetails } from '../types';
+import { useTheme } from '../context/ThemeContext';
 
 interface FormScreenProps {
   onSubmit: (details: UserDetails) => void;
@@ -16,6 +17,7 @@ interface FormErrors {
 }
 
 export function FormScreen({ onSubmit, onBack, initialValues }: FormScreenProps) {
+  const { isDark } = useTheme();
   const [name, setName] = useState(initialValues?.name || '');
   const [email, setEmail] = useState(initialValues?.email || '');
   const [websiteUrl, setWebsiteUrl] = useState(initialValues?.websiteUrl || '');
@@ -123,7 +125,9 @@ export function FormScreen({ onSubmit, onBack, initialValues }: FormScreenProps)
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           onClick={onBack}
-          className="flex items-center gap-2 text-gray-400 hover:text-white mb-8 transition-colors group"
+          className={`flex items-center gap-2 mb-8 transition-colors group ${
+            isDark ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'
+          }`}
         >
           <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
           <span>Back to Home</span>
@@ -146,15 +150,15 @@ export function FormScreen({ onSubmit, onBack, initialValues }: FormScreenProps)
             >
               <Globe className="w-8 h-8 text-white" />
             </motion.div>
-            <h2 className="text-2xl font-bold text-white mb-2">Enter Your Details</h2>
-            <p className="text-gray-400">We'll analyze your website and send you a detailed report</p>
+            <h2 className={`text-2xl font-bold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>Enter Your Details</h2>
+            <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>We'll analyze your website and send you a detailed report</p>
           </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Name Field */}
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="name" className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
                 Your Name
               </label>
               <div className="relative">
@@ -170,12 +174,14 @@ export function FormScreen({ onSubmit, onBack, initialValues }: FormScreenProps)
                   onBlur={() => handleBlur('name')}
                   placeholder="John Doe"
                   maxLength={50}
-                  className={`w-full pl-12 pr-12 py-3 bg-dark-800 border rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 transition-all ${
+                  className={`w-full pl-12 pr-12 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 transition-all ${
+                    isDark ? 'bg-dark-800 text-white placeholder-gray-500' : 'bg-white text-gray-900 placeholder-gray-400'
+                  } ${
                     touched.name && errors.name 
                       ? 'border-red-500 focus:ring-red-500' 
                       : touched.name && !errors.name 
                         ? 'border-green-500' 
-                        : 'border-dark-600'
+                        : isDark ? 'border-dark-600' : 'border-gray-300'
                   }`}
                 />
                 {touched.name && (
@@ -202,7 +208,7 @@ export function FormScreen({ onSubmit, onBack, initialValues }: FormScreenProps)
 
             {/* Email Field */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="email" className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
                 Email Address
               </label>
               <div className="relative">
@@ -217,12 +223,14 @@ export function FormScreen({ onSubmit, onBack, initialValues }: FormScreenProps)
                   }}
                   onBlur={() => handleBlur('email')}
                   placeholder="john@example.com"
-                  className={`w-full pl-12 pr-12 py-3 bg-dark-800 border rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 transition-all ${
+                  className={`w-full pl-12 pr-12 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 transition-all ${
+                    isDark ? 'bg-dark-800 text-white placeholder-gray-500' : 'bg-white text-gray-900 placeholder-gray-400'
+                  } ${
                     touched.email && errors.email 
                       ? 'border-red-500 focus:ring-red-500' 
                       : touched.email && !errors.email 
                         ? 'border-green-500' 
-                        : 'border-dark-600'
+                        : isDark ? 'border-dark-600' : 'border-gray-300'
                   }`}
                 />
                 {touched.email && (
@@ -249,7 +257,7 @@ export function FormScreen({ onSubmit, onBack, initialValues }: FormScreenProps)
 
             {/* URL Field */}
             <div>
-              <label htmlFor="url" className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="url" className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
                 Website URL
               </label>
               <div className="relative">
@@ -264,12 +272,14 @@ export function FormScreen({ onSubmit, onBack, initialValues }: FormScreenProps)
                   }}
                   onBlur={() => handleBlur('websiteUrl')}
                   placeholder="example.com or https://example.com"
-                  className={`w-full pl-12 pr-12 py-3 bg-dark-800 border rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 transition-all ${
+                  className={`w-full pl-12 pr-12 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 transition-all ${
+                    isDark ? 'bg-dark-800 text-white placeholder-gray-500' : 'bg-white text-gray-900 placeholder-gray-400'
+                  } ${
                     touched.websiteUrl && errors.websiteUrl 
                       ? 'border-red-500 focus:ring-red-500' 
                       : touched.websiteUrl && !errors.websiteUrl 
                         ? 'border-green-500' 
-                        : 'border-dark-600'
+                        : isDark ? 'border-dark-600' : 'border-gray-300'
                   }`}
                 />
                 {touched.websiteUrl && (
@@ -292,7 +302,7 @@ export function FormScreen({ onSubmit, onBack, initialValues }: FormScreenProps)
                   {errors.websiteUrl}
                 </motion.p>
               )}
-              <p className="mt-2 text-xs text-gray-500">
+              <p className={`mt-2 text-xs ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
                 Enter your website URL with or without https://
               </p>
             </div>
@@ -306,7 +316,7 @@ export function FormScreen({ onSubmit, onBack, initialValues }: FormScreenProps)
               className={`w-full py-4 rounded-xl font-semibold text-lg transition-all duration-300 flex items-center justify-center gap-3 ${
                 isValid && !isSubmitting
                   ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg hover:shadow-blue-500/25'
-                  : 'bg-dark-700 text-gray-500 cursor-not-allowed'
+                  : isDark ? 'bg-dark-700 text-gray-500 cursor-not-allowed' : 'bg-gray-200 text-gray-400 cursor-not-allowed'
               }`}
             >
               {isSubmitting ? (
@@ -324,7 +334,7 @@ export function FormScreen({ onSubmit, onBack, initialValues }: FormScreenProps)
           </form>
 
           {/* Privacy Note */}
-          <p className="mt-6 text-center text-xs text-gray-500">
+          <p className={`mt-6 text-center text-xs ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
             Your data is secure. We only use it to generate your SEO report.
           </p>
         </motion.div>

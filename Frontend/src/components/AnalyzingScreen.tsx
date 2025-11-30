@@ -10,9 +10,16 @@ import {
   CheckCircle2,
   Loader2,
   Clock,
-  Globe
+  Globe,
+  Lightbulb,
+  TrendingUp,
+  BarChart3,
+  Target,
+  Rocket,
+  Brain
 } from 'lucide-react';
 import { AgentStatus, UserDetails } from '../types';
+import { useTheme } from '../context/ThemeContext';
 
 interface AnalyzingScreenProps {
   userDetails: UserDetails;
@@ -38,7 +45,81 @@ const agentLabels: Record<string, string> = {
   report: 'Report',
 };
 
+// SEO Facts for floating cards
+const seoFacts = [
+  { icon: TrendingUp, text: "53% of website traffic comes from organic search", color: "blue" },
+  { icon: Zap, text: "Page speed impacts 70% of buying decisions", color: "yellow" },
+  { icon: Target, text: "75% of users never scroll past page 1", color: "red" },
+  { icon: BarChart3, text: "SEO leads have 14.6% close rate", color: "green" },
+  { icon: Brain, text: "6 AI agents analyze 50+ ranking factors", color: "purple" },
+  { icon: Rocket, text: "Mobile-first indexing is now default", color: "orange" },
+  { icon: Lightbulb, text: "Quality content increases dwell time 3x", color: "cyan" },
+  { icon: Shield, text: "HTTPS sites rank higher on Google", color: "emerald" },
+];
+
+const colorClasses: Record<string, { bg: string; border: string; text: string; icon: string }> = {
+  blue: { bg: 'bg-blue-500/10', border: 'border-blue-500/30', text: 'text-blue-300', icon: 'text-blue-400' },
+  yellow: { bg: 'bg-yellow-500/10', border: 'border-yellow-500/30', text: 'text-yellow-300', icon: 'text-yellow-400' },
+  red: { bg: 'bg-red-500/10', border: 'border-red-500/30', text: 'text-red-300', icon: 'text-red-400' },
+  green: { bg: 'bg-green-500/10', border: 'border-green-500/30', text: 'text-green-300', icon: 'text-green-400' },
+  purple: { bg: 'bg-purple-500/10', border: 'border-purple-500/30', text: 'text-purple-300', icon: 'text-purple-400' },
+  orange: { bg: 'bg-orange-500/10', border: 'border-orange-500/30', text: 'text-orange-300', icon: 'text-orange-400' },
+  cyan: { bg: 'bg-cyan-500/10', border: 'border-cyan-500/30', text: 'text-cyan-300', icon: 'text-cyan-400' },
+  emerald: { bg: 'bg-emerald-500/10', border: 'border-emerald-500/30', text: 'text-emerald-300', icon: 'text-emerald-400' },
+};
+
+// Floating card component
+function FloatingFactCard({ fact, index }: { fact: typeof seoFacts[0]; index: number }) {
+  const colors = colorClasses[fact.color];
+  const Icon = fact.icon;
+  
+  // Random positions and animations for each card
+  const positions = [
+    { x: '3%', y: '8%' },
+    { x: '78%', y: '12%' },
+    { x: '5%', y: '72%' },
+    { x: '75%', y: '68%' },
+    { x: '2%', y: '40%' },
+    { x: '80%', y: '42%' },
+    { x: '8%', y: '22%' },
+    { x: '72%', y: '82%' },
+  ];
+  
+  const pos = positions[index % positions.length];
+  
+  return (
+    <motion.div
+      className={`absolute max-w-[240px] px-4 py-3 rounded-2xl ${colors.bg} border ${colors.border} backdrop-blur-sm shadow-lg cursor-default transition-opacity duration-300 hover:!opacity-90`}
+      style={{ left: pos.x, top: pos.y }}
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ 
+        opacity: [0.25, 0.45, 0.25],
+        y: [0, -20, 0],
+        rotate: [0, 3, -3, 0],
+      }}
+      whileHover={{
+        scale: 1.05,
+        opacity: 1,
+        rotate: 0,
+        transition: { duration: 0.2 }
+      }}
+      transition={{ 
+        duration: 4 + index * 0.5,
+        repeat: Infinity,
+        delay: index * 0.8,
+        ease: "easeInOut"
+      }}
+    >
+      <div className="flex items-start gap-3">
+        <Icon className={`w-6 h-6 ${colors.icon} flex-shrink-0 mt-0.5`} />
+        <p className={`text-sm ${colors.text} leading-snug font-medium`}>{fact.text}</p>
+      </div>
+    </motion.div>
+  );
+}
+
 export function AnalyzingScreen({ userDetails, agents }: AnalyzingScreenProps) {
+  const { isDark } = useTheme();
   const [elapsedTime, setElapsedTime] = useState(0);
   const [dots, setDots] = useState('');
 
@@ -66,11 +147,19 @@ export function AnalyzingScreen({ userDetails, agents }: AnalyzingScreenProps) {
   const progress = (completedCount / agents.length) * 100;
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4">
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 relative overflow-hidden">
+      {/* Floating SEO Fact Cards */}
+      {/* Floating SEO Fact Cards */}
+      <div className="absolute inset-0">
+        {seoFacts.map((fact, index) => (
+          <FloatingFactCard key={index} fact={fact} index={index} />
+        ))}
+      </div>
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-4xl text-center"
+        className="w-full max-w-4xl text-center relative z-10 pointer-events-none"
       >
         {/* Spinning Globe */}
         <motion.div
@@ -95,20 +184,20 @@ export function AnalyzingScreen({ userDetails, agents }: AnalyzingScreenProps) {
         </motion.div>
 
         {/* Title */}
-        <h2 className="text-xl font-bold text-white mb-1">
+        <h2 className={`text-xl font-bold mb-1 ${isDark ? 'text-white' : 'text-gray-900'}`}>
           Analyzing {userDetails.websiteUrl.replace(/^https?:\/\//, '').replace(/\/$/, '')}
         </h2>
-        <p className="text-gray-400 text-sm mb-6">
+        <p className={`text-sm mb-6 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
           AI agents are working{dots}
         </p>
 
         {/* Progress Bar */}
         <div className="max-w-md mx-auto mb-8">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-xs text-gray-500">Progress</span>
-            <span className="text-xs text-gray-400">{Math.round(progress)}%</span>
+            <span className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>Progress</span>
+            <span className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{Math.round(progress)}%</span>
           </div>
-          <div className="h-1.5 bg-dark-700 rounded-full overflow-hidden">
+          <div className={`h-1.5 rounded-full overflow-hidden ${isDark ? 'bg-dark-700' : 'bg-gray-200'}`}>
             <motion.div
               className="h-full bg-gradient-to-r from-blue-500 to-purple-500"
               initial={{ width: 0 }}
@@ -131,7 +220,7 @@ export function AnalyzingScreen({ userDetails, agents }: AnalyzingScreenProps) {
                   ? 'bg-blue-500/10 border-2 border-blue-500/50 shadow-lg shadow-blue-500/20'
                   : agent.status === 'completed'
                   ? 'bg-green-500/10 border-2 border-green-500/50'
-                  : 'bg-dark-800/50 border-2 border-dark-600'
+                  : isDark ? 'bg-dark-800/50 border-2 border-dark-600' : 'bg-white/50 border-2 border-gray-200'
               }`}
             >
               {/* Status indicator dot */}
@@ -150,7 +239,7 @@ export function AnalyzingScreen({ userDetails, agents }: AnalyzingScreenProps) {
                     ? 'bg-blue-500/20 text-blue-400'
                     : agent.status === 'completed'
                     ? 'bg-green-500/20 text-green-400'
-                    : 'bg-dark-700 text-gray-500'
+                    : isDark ? 'bg-dark-700 text-gray-500' : 'bg-gray-100 text-gray-400'
                 }`}
               >
                 {agent.status === 'running' ? (
@@ -173,7 +262,7 @@ export function AnalyzingScreen({ userDetails, agents }: AnalyzingScreenProps) {
                   ? 'text-blue-400'
                   : agent.status === 'completed'
                   ? 'text-green-400'
-                  : 'text-gray-500'
+                  : isDark ? 'text-gray-500' : 'text-gray-400'
               }`}>
                 {agentLabels[agent.name] || agent.name}
               </p>
@@ -182,9 +271,9 @@ export function AnalyzingScreen({ userDetails, agents }: AnalyzingScreenProps) {
         </div>
 
         {/* Timer */}
-        <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
+        <div className={`flex items-center justify-center gap-2 text-sm ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
           <Clock className="w-4 h-4" />
-          <span>Elapsed: <span className="text-gray-300 font-medium">{formatTime(elapsedTime)}</span></span>
+          <span>Elapsed: <span className={`font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>{formatTime(elapsedTime)}</span></span>
         </div>
       </motion.div>
     </div>

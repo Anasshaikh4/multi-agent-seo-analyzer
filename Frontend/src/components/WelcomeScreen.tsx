@@ -1,11 +1,14 @@
 import { motion } from 'framer-motion';
 import { Sparkles, Bot, Zap, Shield, Search, BarChart3 } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 
 interface WelcomeScreenProps {
   onStart: () => void;
 }
 
 export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
+  const { isDark } = useTheme();
+  
   const features = [
     { icon: Shield, label: 'Security Analysis', color: 'text-red-400' },
     { icon: Search, label: 'SEO Optimization', color: 'text-yellow-400' },
@@ -30,14 +33,14 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
           className="mb-8 relative inline-block"
         >
           <div className="w-24 h-24 mx-auto rounded-2xl bg-gradient-to-br from-blue-500 via-purple-500 to-cyan-500 p-[2px] animate-glow">
-            <div className="w-full h-full rounded-2xl bg-dark-900 flex items-center justify-center">
-              <Bot className="w-12 h-12 text-white" />
+            <div className={`w-full h-full rounded-2xl flex items-center justify-center ${isDark ? 'bg-dark-900' : 'bg-white'}`}>
+              <Bot className={`w-12 h-12 ${isDark ? 'text-white' : 'text-indigo-600'}`} />
             </div>
           </div>
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-            className="absolute -inset-4 rounded-full border border-blue-500/20"
+            className={`absolute -inset-4 rounded-full border ${isDark ? 'border-blue-500/20' : 'border-indigo-400/30'}`}
           />
         </motion.div>
 
@@ -56,7 +59,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
-          className="text-xl md:text-2xl text-gray-400 mb-4"
+          className={`text-xl md:text-2xl mb-4 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}
         >
           Multi-Agent AI Analysis Powered by
         </motion.p>
@@ -67,9 +70,9 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
           transition={{ delay: 0.7 }}
           className="flex items-center justify-center gap-3 mb-8"
         >
-          <span className="text-lg text-gray-300">Google ADK</span>
-          <span className="text-gray-600">•</span>
-          <span className="text-lg text-gray-300">Gemini 2.0 Flash</span>
+          <span className={`text-lg ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Google ADK</span>
+          <span className={isDark ? 'text-gray-600' : 'text-gray-400'}>•</span>
+          <span className={`text-lg ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Gemini 2.0 Flash</span>
         </motion.div>
 
         {/* Description */}
@@ -77,7 +80,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
-          className="text-gray-400 text-lg max-w-2xl mx-auto mb-12"
+          className={`text-lg max-w-2xl mx-auto mb-12 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}
         >
           Get comprehensive website analysis in seconds. Six specialized AI agents work in parallel 
           to analyze security, SEO, content, performance, and indexability.
@@ -96,10 +99,12 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 1 + index * 0.1 }}
-              className="glass rounded-xl p-4 text-center hover:bg-white/5 transition-colors"
+              className={`glass rounded-xl p-4 text-center transition-colors ${
+                isDark ? 'hover:bg-white/5' : 'hover:bg-indigo-50'
+              }`}
             >
               <feature.icon className={`w-8 h-8 mx-auto mb-2 ${feature.color}`} />
-              <span className="text-sm text-gray-300">{feature.label}</span>
+              <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>{feature.label}</span>
             </motion.div>
           ))}
         </motion.div>
@@ -131,7 +136,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.6 }}
-          className="mt-16 flex items-center justify-center gap-8 text-sm text-gray-500"
+          className={`mt-16 flex items-center justify-center gap-8 text-sm ${isDark ? 'text-gray-500' : 'text-gray-600'}`}
         >
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
