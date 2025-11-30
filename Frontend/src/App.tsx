@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Github } from 'lucide-react';
 import { WelcomeScreen } from './components/WelcomeScreen';
 import { FormScreen } from './components/FormScreen';
 import { AnalyzingScreen } from './components/AnalyzingScreen';
@@ -202,6 +203,19 @@ function App() {
           )}
         </AnimatePresence>
       </div>
+
+      {/* Developer Credit */}
+      <a
+        href="https://github.com/anasshaikh4"
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`fixed bottom-4 right-4 z-50 flex items-center gap-1.5 text-sm font-medium transition-all hover:opacity-80 hover:scale-105 ${
+          isDark ? 'text-gray-400' : 'text-gray-500'
+        }`}
+      >
+        <Github className="w-4 h-4" />
+        developed by: <span className="text-blue-400 hover:text-blue-300">anasshaikh4</span>
+      </a>
     </div>
   );
 }
