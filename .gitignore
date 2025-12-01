@@ -104,3 +104,7 @@ Thumbs.db
 
 # Logs
 *.log
+
+
+# database files
+*.db
